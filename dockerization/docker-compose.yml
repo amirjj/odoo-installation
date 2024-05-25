@@ -1,0 +1,37 @@
+version: '3.1'
+
+services:
+  odoo:
+    build:
+      context: ./odoo
+      dockerfile: Dockerfile
+    container_name: odoo17
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo-data:/var/lib/odoo
+      - ./odoo/odoo17.conf:/etc/odoo17.conf
+      - ./odoo/odoo-custom-addons:/opt/odoo17/odoo-custom-addons
+    environment:
+      - HOST=odoo17-db
+      - USER=odoo17
+      - PASSWORD=odoo17
+    depends_on:
+      - db
+    user: "odoo17:odoo17"
+
+  db:
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    container_name: odoo17-db
+    environment:
+      - POSTGRES_USER=odoo17
+      - POSTGRES_PASSWORD=odoo17
+      - POSTGRES_DB=postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  odoo-data:
+  db-data:
